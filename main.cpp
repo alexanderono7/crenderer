@@ -5,9 +5,9 @@ const TGAColor red   = TGAColor(255, 0,   0,   255);
 const TGAColor blue  = TGAColor(0, 0,   255,   255);
 
 void line(int x0, int y0, int x1, int y1, TGAImage &image, TGAColor color) {
-	for (float t = 0.; t < 1.; t += .01) {
-		int x = x0 + (x1-x0)*t;
-		int y = y0 + (y1-y0)*t;
+	for (float x = x0; x <= x1; x++) {
+		float t = (x-x0)/(float)(x1-x0);
+		int y = y0*(1.-t) + (y1*t);
         image.set(x, y, color);
     }
 }
@@ -19,8 +19,9 @@ int main(int argc, char** argv) {
 	image.set(52, 41, red);
 
     // draw line
-    line(0, 0, 50, 50, image, blue);
-	image.flip_vertically(); // i want to have the origin at the left bottom corner of the image
+    line(0, 0, 25, 80, image, blue);
+    line(0, 0, 80, 25, image, red);
+	image.flip_vertically(); // i want to have the origin (0,0) at the left bottom corner of the image
 	image.write_tga_file("output1.tga");
 	return 0;
 }
