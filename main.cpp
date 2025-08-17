@@ -13,20 +13,29 @@ void line(int x0, int y0, int x1, int y1, TGAImage &image, TGAColor color) {
         std::swap(x1, y1);
         steep = true;
     }
+
     // make it left-to-right if it is not 
     if (x0 > x1) { 
         std::swap(x0, x1);
         std::swap(y0, y1);
     }
-    float divisor = (float)(x1-x0);
+
+    int dx = x1-x0;
+    int dy = y1-y0;
+    float derror = std::abs(dy/float(dx));
+    float error = 0;
+    int y = y0;
+
     for (int x=x0; x<=x1; x++) {
-        float t = (x-x0)/divisor;
-        int y = y0*(1.-t) + y1*t;
-        // un-transpose the image if it was transposed
         if (steep) {
             image.set(y, x, color);
         } else {
             image.set(x, y, color);
+        }
+        error += derror;
+        if (error > .5) {
+            y += (y1>y0 ? 1:-1);
+            error -= 1.;
         }
     }
 }
@@ -40,6 +49,7 @@ int main(int argc, char** argv) {
     // draw line
     line(0, 0, 25, 80, image, blue);
     line(0, 0, 80, 25, image, red);
+    line(5, 5, 5, 50, image, blue);
 	image.flip_vertically(); // i want to have the origin (0,0) at the left bottom corner of the image
 	image.write_tga_file("output1.tga");
 	return 0;
